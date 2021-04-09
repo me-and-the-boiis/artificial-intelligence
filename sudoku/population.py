@@ -1,15 +1,24 @@
+from sudoku import *
 import numpy
 import random
-from sudoku import *
+
 random.seed()
 
 class Candidate:
     def __init__(self):
         self.board = []
-        self.fitness = None
+        self.score = 0
     
     def updateFitness(self):
-        pass
+        score = 81
+        for i in range(ND):
+            colCheck = [True for i in range(ND)]
+            blockCheck = [True for i in range(ND)]
+            for j in range(ND):
+                score += colCheck[self.board[j][i]-1] + blockCheck[self.board[i-i%3+int(j/3)][(i%3)*3 + j%3 ]-1]
+                colCheck[self.board[j][i]-1] = False
+                blockCheck[self.board[i-i%3+int(j/3)][(i%3)*3 + j%3 ] -1] = False
+        self.score = score
 
     def __str__(self):
         line = "+-----------------------+"
