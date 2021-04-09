@@ -4,81 +4,61 @@ from copy import *
 import random
 
 
-def update(index, new_index, state):
-    new = deepcopy(state)
-    new[index[0]][index[1]] = state[new_index[0]][new_index[1]]
-    new[new_index[0]][new_index[1]] = state[index[0]][index[1]]
+class Board:
+    def __init__(self, state):
+        self.state = state
+        for x in range(len(init)):
+            for y in range(len(init)):
+                if init[x][y] == 0:
+                    self.index = (x, y)
+
+
+def movement(index, new_index, node):
+    new = Board(deepcopy(node.state))
+    new.state[index[0]][index[1]] = node.state[new_index[0]][new_index[1]]
+    new.state[new_index[0]][new_index[1]] = node.state[index[0]][index[1]]
+    new.index = new_index
     return new
 
-class Puzzle:
-    def __init__(self, current, goal, size):
-        self.current = current
-        self.goal = goal
-        self.size = size
-        self.visited = []
-        for i in range(size):
-            for j in range(size):
-                if current[i][j] == 0:
-                    self.blank_index = (i, j)
-                    return
 
-    def up(self):
-        # self.blank_index[0] -= 1
-        new_index = (self.blank_index[0] - 1, self.blank_index[1])
-        self.current = update(self.blank_index, new_index, self.current)
-        self.blank_index = new_index
-        print2d(self.current)
-
-    def down(self):
-        # self.blank_index[0] += 1
-        new_index = (self.blank_index[0] + 1, self.blank_index[1])
-        self.current = update(self.blank_index, new_index, self.current)
-        self.blank_index = new_index
-        print2d(self.current)
-
-    def left(self):
-        # self.blank_index[1] -= 1
-        new_index = (self.blank_index[0], self.blank_index[1] - 1)
-        self.current = update(self.blank_index, new_index, self.current)
-        self.blank_index = new_index
-        print2d(self.current)
-
-    def right(self):
-        # self.blank_index[1] += 1
-        new_index = (self.blank_index[0], self.blank_index[1] + 1)
-        self.current = update(self.blank_index, new_index, self.current)
-        self.blank_index = new_index
-        print2d(self.current)
-
-    def dfs(self):
-        # Check if current already visited
-        for node in self.visited:
-            if self.current == node:
-                return
-        if self.current == self.goal:
-            return
-        self.visited.append(self.current)
-        # Generate new node(s) with move
-        if self.blank_index[0] != 0:
-            self.up()
-            self.dfs()
-        if self.blank_index[1] != 0:
-            self.left()
-            self.dfs()
-        if self.blank_index[0] != self.size - 1:
-            self.down()
-            self.dfs()
-        if self.blank_index[1] != self.size - 1:
-            self.right()
-            self.dfs()
+def generate(node):
+    nodes = []
+    # Up
+    if node.index[0] != 0:
+        new_index = (node.index[0] - 1, node.index[1])
+        nodes.append(movement(node.index, new_index, node))
+    # Down
+    if node.index[0] != len(init) - 1:
+        new_index = (node.index[0] + 1, node.index[1])
+        nodes.append(movement(node.index, new_index, node))
+    # Left
+    if node.index[1] != 0:
+        new_index = (node.index[0], node.index[1] - 1)
+        nodes.append(movement(node.index, new_index, node))
+    # Right
+    if node.index[1] != len(init) - 1:
+        new_index = (node.index[0], node.index[1] + 1)
+        nodes.append(movement(node.index, new_index, node))
+    return nodes
 
 
-def print2d(lst):
-    for r in lst:
-        for c in r:
-            print(c, end="\t")
-        print()
-    print()
+def dfs(root):
+    visited = set()
+    stack = list([Board(root)])
+    while stack:
+        node = stack.pop()
+        for i in visited:
+            if node == i:
+                continue
+        visited.add(node)
+        if node.state == goal:
+            return stack
+        # Generate possible paths
+        possible_paths = generate(node)
+        for path in possible_paths:
+            if path not in visited:
+                stack.append(path)
+                visited.add(path)
 
 
 def randomme(n):
@@ -86,13 +66,18 @@ def randomme(n):
     return np.reshape(oned, (n, n))
 
 
+init = randomme(2)
+goal = randomme(2)
+# init = [[0, 1],
+#         [2, 3]]
+# goal = [[1, 0],
+#         [2, 3]]
+print(init)
+print(goal)
+
+
 def main():
-    init = randomme(2)
-    goal = randomme(2)
-    print2d(init)
-    print2d(goal)
-    # solver = Puzzle(init, goal, len(init))
-    # solver.dfs()
+    dfs(init)
 
 
 if __name__ == '__main__':
