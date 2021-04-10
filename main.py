@@ -4,7 +4,7 @@ import os
 
 from astar_pathfiding import AStar
 from astar_pathfiding import Spot, Path, Obstacle, Button
-from astar_pathfiding import Car
+from astar_pathfiding import Road
 
 
 from astar_pathfiding.draw_map import SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_TITLE, DIV, DT, G_W, G_H
@@ -14,18 +14,18 @@ class AStarPathFinding(arcade.Window):
     def __init__(self, width, height, title):
 
         super().__init__(width, height, title)
-        # Related to Map
+        # Nhung gi lien quan den Map
         self.PATH = None
         self.MAP = None
-        self.CAR = None
+        self.ROAD = None
         self.obstacle_button = None
-        self.reset_button = None
-        self.debug_button = None
+        #self.reset_button = None
+        #self.debug_button = None
         self.obstacles = None
-        self.text_state = "Click and Drag your mouse over the grid to place obstacles"
+        self.text_state = "Create Obstacles"
         self.extra_text = " "
         self.status = None
-        arcade.set_background_color(arcade.color.WHITE)
+        arcade.set_background_color(arcade.color.WHITE_SMOKE)
 
         # Related to Physics
         self.space = None
@@ -36,7 +36,7 @@ class AStarPathFinding(arcade.Window):
         self.space.gravity = (0.0, 0.0)
 
 
-        self.status = {'start_selected': False, 'goal_selected': False, 'found_path': False, 'draw_obstacles': True, 'debug': False}
+        self.status = {'start_selected': False, 'goal_selected': False, 'found_path': False, 'draw_obstacles': True}
         self.extra_text = " "
 
         # Setting up Map
@@ -49,14 +49,14 @@ class AStarPathFinding(arcade.Window):
         self.MAP.calculate_inital_grid()
 
         # Setting up GUI
-        self.obstacle_button = Button(110, SCREEN_HEIGHT - 20, 200, 30, "Finish Drawing")
-        self.reset_button = Button(360, SCREEN_HEIGHT - 20, 80, 30, "Reset")
-        self.debug_button = Button(450, SCREEN_HEIGHT - 20, 80, 30, "Debug")
-        print("Setup Finished")
+        self.obstacle_button = Button(100, SCREEN_HEIGHT - 20, 200, 30, "FINISH DRAWING")
+        #self.reset_button = Button(360, SCREEN_HEIGHT - 20, 80, 30, "RESET")
+        #self.debug_button = Button(450, SCREEN_HEIGHT - 20, 80, 30, "DEBUG")
+        #print("Setup Finished")
 
         # Setting up Space
-        self.CAR = Car()
-        self.space.add(self.CAR.body, self.CAR.shape)
+        self.ROAD = Road()
+        self.space.add(self.ROAD.body, self.ROAD.shape)
 
         # Setting up Path
         self.PATH = Path()
@@ -69,7 +69,7 @@ class AStarPathFinding(arcade.Window):
         self.status['goal_selected'] = False
         self.status['found_path'] = False
         self.MAP.next_state()
-        self.CAR.next_state()
+        self.ROAD.next_state()
         self.PATH = Path()
         
 
@@ -83,11 +83,11 @@ class AStarPathFinding(arcade.Window):
         else:
             self.PATH.draw_path(self.status['debug'])
             self.obstacles_shape_list.draw()
-            self.CAR.draw_car(self.status['debug'])
+            self.ROAD.draw_car(self.status['debug'])
 
         self.obstacle_button.draw()
-        self.reset_button.draw()
-        self.debug_button.draw()
+        #self.reset_button.draw()
+        #self.debug_button.draw()
         arcade.draw_text(self.text_state, 5, SCREEN_HEIGHT - 50, arcade.color.BLACK, 14, anchor_x="left", anchor_y="top")
         arcade.draw_text(self.extra_text, 5, SCREEN_HEIGHT - 75, arcade.color.BLACK, 14, anchor_x="left", anchor_y="top")
 
@@ -110,8 +110,8 @@ class AStarPathFinding(arcade.Window):
                     self.status['goal_selected'] = False
                     self.MAP.reset_goal()
         else:
-            moving = self.CAR.follow_path()
-            self.CAR.update()
+            moving = self.ROAD.follow_path()
+            self.ROAD.update()
             if not moving:
                 self.next_state()
             self.space.step(DT)
@@ -127,17 +127,17 @@ class AStarPathFinding(arcade.Window):
         if self.obstacle_button.clicked(x, y):
             self.status['draw_obstacles'] = not self.status['draw_obstacles']
             if not self.status['draw_obstacles']:
-                self.text_state = "Select two end points, first for the start then for the end."
-                self.obstacle_button.change_text("Draw Obstacles")
+                self.text_state = "Select initial state and goal state, the first is initial, the second is goal"
+                self.obstacle_button.change_text("DRAW OBSTACLE")
             else:
-                self.obstacle_button.change_text("Finish Drawing")
+                self.obstacle_button.change_text("FINISH DRAWING")
                 self.text_state = "Click and Drag your mouse over the grid to place obstacles"
 
-        elif self.reset_button.clicked(x, y):
-            self.setup()
+        #elif self.reset_button.clicked(x, y):
+         #   self.setup()
 
-        elif self.debug_button.clicked(x, y):
-            self.status['debug'] = not self.status['debug']
+        #elif self.debug_button.clicked(x, y):
+        #    self.status['debug'] = not self.status['debug']
 
         else:
             if not self.status['draw_obstacles']:
@@ -147,7 +147,7 @@ class AStarPathFinding(arcade.Window):
                     start = self.MAP.set_start(row, column)
                     if start is not None:
                         self.status['start_selected'] = True
-                        self.CAR.set_start(start)
+                        self.ROAD.set_start(start)
                     else:
                         self.extra_text = "You cannot start on a wall!"
 
@@ -156,7 +156,7 @@ class AStarPathFinding(arcade.Window):
                         goal = self.MAP.set_goal(row, column)
                         if goal is not None:
                             self.status['goal_selected'] = True
-                            self.CAR.set_goal(goal)
+                            self.ROAD.set_goal(goal)
                         else:
                             self.extra_text = "Goal cannot be set over an obstacle!"
 

@@ -7,7 +7,10 @@ from .draw_map import G_H, G_W, DIV
 
 
 class AStar:
-    
+
+
+    #A star algorithm implementation
+    #f(n) = g(n) + h(n)
     def __init__(self, div):
         # Lists for calculation and path finding
         self.spots = []
@@ -94,19 +97,19 @@ class AStar:
     def calculate_inital_grid(self):
         for col in self.spots:
             for spot in col:
-                shape = arcade.create_rectangle_outline(spot.x * G_W + G_W / 2, spot.y * G_H + G_H / 2, G_W, G_H, arcade.color.BLACK)
+                shape = arcade.create_rectangle_outline(spot.x * G_W + G_W / 2, spot.y * G_H + G_H / 2, G_W, G_H, arcade.color.BLUE)
                 self.spots_list.append(shape)
         for shape in self.spots_list:
             self.spots_shape_list.append(shape)
         
-    # Add data to UserMap
+    # Add data to AStar
     def add_spots(self, spots):
         self.spots.append(spots)
                 
 
 ################### Setters ###################
 
-    # Set data to UserMap
+    # Set data to AStar
     def set_wall(self, row, col):
         spot = self.spots[row][col]
         self.spots_list[row * DIV + col] = arcade.create_ellipse_filled(spot.x * G_W + G_W / 2, spot.y * G_H + G_H / 2, 3, 3, arcade.color.RED)
@@ -130,7 +133,7 @@ class AStar:
         spot = self.spots[row][col]
         if spot.is_not_wall():
             self.GOAL = spot
-            self.spots_list[row * DIV + col] = arcade.create_rectangle_filled(spot.x * G_W + G_W / 2, spot.y * G_H + G_H / 2, G_W, G_H, arcade.color.AO)
+            self.spots_list[row * DIV + col] = arcade.create_rectangle_filled(spot.x * G_W + G_W / 2, spot.y * G_H + G_H / 2, G_W, G_H, arcade.color.EMERALD)
             self.__recalculate_grid()
             return self.GOAL
         return None
