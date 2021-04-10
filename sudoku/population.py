@@ -65,7 +65,7 @@ class Population:
         # print("Hepler:")
         # print(self.helper)
         validAllRows = []
-        k = 1;
+        k = 1
         for i in range(ND):
             validAllRows.append(self.genValidRow(i))
         for i in range(self.size):
@@ -74,6 +74,7 @@ class Population:
                 cand.board.append(validAllRows[row][random.randint(0, len(validAllRows[row])-1)])
 
             self.candidates.append(cand)
+        self.updateFitness()
         print("Generate candidate completed")
 
     def genValidRow(self, row):
@@ -97,3 +98,19 @@ class Population:
                 tmp[currentRowIndex[i]] = child[i]
             validRows.append(tmp) 
         return validRows
+
+    def updateFitness(self):
+        for candidate in self.candidates:
+            candidate.updateFitness()
+        return
+
+    def sort(self):
+        """ Sort the population based on fitness. """
+        self.candidates.sort(key=lambda x: x.score, reverse=True)
+        # for c in range(0, self.size):
+        #     print(self.candidates[c].score)
+        return
+
+
+    def mutate(self):
+        pass
