@@ -3,14 +3,13 @@ from solver import *
 def main():
     # print("Hello World!")
     sudoku = Sudoku(Level.EASY)
-
-    nCandidate = 2
-    nGeneration = 2
+    nCandidate = 500
+    nGeneration = 10
     nMutation = 2
 
     solver = Solver(sudoku, nCandidate, nGeneration, nMutation)
     solver.initPopulation()
-    print(solver.population.candidates[0])
-
+    solver.solve()
+    # solver.population.sort()
 if __name__ == "__main__":
     main()
