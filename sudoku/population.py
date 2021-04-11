@@ -34,6 +34,9 @@ class Candidate:
             result+=row
         return result
 
+    def mutate(self):
+        pass
+
 def permutation(array, check = [False for i in range(10)], cur = []):
     if not array:
         return [cur.copy()]
@@ -107,10 +110,7 @@ class Population:
     def sort(self):
         """ Sort the population based on fitness. """
         self.candidates.sort(key=lambda x: x.score, reverse=True)
-        # for c in range(0, self.size):
-        #     print(self.candidates[c].score)
         return
 
 
-    def mutate(self):
-        pass
+

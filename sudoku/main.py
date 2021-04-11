@@ -10,7 +10,6 @@ def main():
     solver = Solver(sudoku, nCandidate, nGeneration, nMutation)
     solver.initPopulation()
     solver.solve()
-    print(solver.population.candidates[0])
     # solver.population.sort()
 if __name__ == "__main__":
     main()
