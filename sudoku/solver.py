@@ -32,7 +32,6 @@ class CrossOver(object):
         return
 
     def crossover(self, parent1, parent2, crossover_rate):
-        """ Create two new child candidates by crossing over parent genes. """
         child1 = Candidate()
         child2 = Candidate()
 
@@ -46,7 +45,6 @@ class CrossOver(object):
 
         # Perform crossover.
         if (r < crossover_rate):
-            # Pick a crossover point. Crossover must have at least 1 row (and at most Nd-1) rows.
             crossover_point1 = random.randint(0, 8)
             crossover_point2 = random.randint(1, 9)
             while (crossover_point1 == crossover_point2):
@@ -128,7 +126,7 @@ class Solver:
         self.nElites = int(0.2*self.nCandidate)    # Number of Elite candidates
         self.phi = 0
         self.sigma = 0
-        self.mutation_rate = 0.06
+        self.mutation_rate = 0.11
 
     def initPopulation(self):
         self.population = Population(self.nCandidate, self.sudoku)
@@ -139,7 +137,7 @@ class Solver:
             print("Generation %d" % generation)
             for c in range(0, self.nCandidate):
                 fitness = self.population.candidates[c].score
-                print(fitness)
+                # print(fitness)
                 if fitness == 243:
                     print("Solution found at generation %d" % generation)
                     print(self.population.candidates[c])
@@ -149,7 +147,7 @@ class Solver:
                     best_fitness = fitness
 
             print("Best: %d" % best_fitness)
-            # next_gen = []
+            next_gen = []
             self.population.sort()
             elites = []
             for i in range(0, self.nElites):
@@ -161,10 +159,23 @@ class Solver:
                 t = Tournament()
                 p1 = t.compete(self.population.candidates)
                 p2 = t.compete(self.population.candidates)
+
                 cross = CrossOver()
                 child1, child2 = cross.crossover(p1, p2, crossover_rate=1.0)
+
                 child1.updateFitness()
                 child2.updateFitness()
 
-                preMutated = child1.score
-                success = child1.mutate()
+                child1.mutate(mutate_rate=self.mutation_rate, sudoku=self.sudoku)
+                child1.mutate(mutate_rate=self.mutation_rate, sudoku=self.sudoku)
+
+                next_gen.append(child1)
+                next_gen.append(child2)
+
+            for i in range(0, self.nElites):
+                next_gen.append(elites[i])
+            self.population.candidates = next_gen
+            self.population.updateFitness()
+
+        print("No solution found")
+        return None

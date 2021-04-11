@@ -3,8 +3,8 @@ from solver import *
 def main():
     # print("Hello World!")
     sudoku = Sudoku(Level.EASY)
-    nCandidate = 10
-    nGeneration = 2
+    nCandidate = 500
+    nGeneration = 10
     nMutation = 2
 
     solver = Solver(sudoku, nCandidate, nGeneration, nMutation)

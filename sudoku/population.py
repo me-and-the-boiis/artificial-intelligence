@@ -34,9 +34,64 @@ class Candidate:
             result+=row
         return result
 
-    def mutate(self):
-        pass
+    def mutate(self, mutate_rate, sudoku):
+        r = random.uniform(0, 1.1)
+        while (r > 1):  # Outside [0, 1] boundary - choose another
+            r = random.uniform(0, 1.1)
 
+        success = False
+        if (r < mutate_rate):  # Mutate.
+            while (not success):
+                row = random.randint(0, 8)
+                # row2 = row1
+
+                from_column = random.randint(0, 8)
+                to_column = random.randint(0, 8)
+                while from_column == to_column:
+                    from_column = random.randint(0, 8)
+                    to_column = random.randint(0, 8)
+                if(sudoku.board[row][from_column] == 0 and sudoku.board[row][to_column] == 0):
+                    # if (not self.is_column_duplicate(to_column, self.board[row1][from_column])
+                    #     and not self.is_column_duplicate(from_column, self.board[row2][to_column])
+                    #     and not self.is_block_duplicate(row2, to_column, self.board[row1][from_column])
+                    #     and not self.is_block_duplicate(row1, from_column, self.board[row2][to_column])):
+                        #Swap
+                    temp = self.board[row][to_column]
+                    self.board[row][to_column] = self.board[row][from_column]
+                    self.board[row][from_column] = temp
+                    success = True
+        self.updateFitness()
+        return success
+
+    def is_row_duplicate(self, row, value):
+        for column in range(0, 9):
+            if (self.board[row][column] == value):
+                return True
+        return False
+
+    def is_column_duplicate(self, col, value):
+        for row in range(0, 9):
+            if (self.board[row][col] == value):
+                return True
+        return False
+
+    def is_block_duplicate(self, row, column, value):
+        i = 3 * (int(row / 3))
+        j = 3 * (int(column / 3))
+
+        if    ((self.board[i][j] == value)
+            or (self.board[i][j + 1] == value)
+            or (self.board[i][j + 2] == value)
+            or (self.board[i + 1][j] == value)
+            or (self.board[i + 1][j + 1] == value)
+            or (self.board[i + 1][j + 2] == value)
+            or (self.board[i + 2][j] == value)
+            or (self.board[i + 2][j + 1] == value)
+            or (self.board[i + 2][j + 2] == value)):
+            return True
+        else:
+            return False
+        
 def permutation(array, check = [False for i in range(10)], cur = []):
     if not array:
         return [cur.copy()]
