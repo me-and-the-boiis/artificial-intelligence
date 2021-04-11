@@ -2,20 +2,20 @@ import arcade
 import pymunk
 import math
 
-# Viewport settings
-SCREEN_WIDTH = 500
-SCREEN_HEIGHT = 600
+# Setting giao dien
+SCREEN_WIDTH = 400
+SCREEN_HEIGHT = 500
 SCREEN_TITLE = "PathFiding A*"
 
 # Physics steps
 DT = 1 / 80.0
 
-# Map settings
-HEIGHT = 500
+# Setting chieu dai, chieu rong, cac thu can thiet cho grid.
+HEIGHT = 400
 WIDTH = SCREEN_WIDTH
-DIV = 25
-G_W = WIDTH // DIV
-G_H = HEIGHT // DIV
+DIV = 20
+G_W = WIDTH // DIV #Chiều dài mỗi ô nhỏ
+G_H = HEIGHT // DIV #Chiều cao mỗi ô nhỏ
 
 # For Line
 VERTICAL_LINE_GRADIENT = 1e5
@@ -56,12 +56,12 @@ class Button:
         else:
             color = self.highlight_color
 
-        # Bottom horizontal
+        # Cạnh dưới 
         arcade.draw_line(self.center_x - self.width / 2, self.center_y - self.height / 2,
                          self.center_x + self.width / 2, self.center_y - self.height / 2,
                          color, self.button_height)
 
-        # Right vertical
+        # Cạnh bên phải
         arcade.draw_line(self.center_x + self.width / 2, self.center_y - self.height / 2,
                          self.center_x + self.width / 2, self.center_y + self.height / 2,
                          color, self.button_height)
@@ -71,12 +71,12 @@ class Button:
         else:
             color = self.shadow_color
 
-        # Top horizontal
+        # Cạnh trên
         arcade.draw_line(self.center_x - self.width / 2, self.center_y + self.height / 2,
                          self.center_x + self.width / 2, self.center_y + self.height / 2,
                          color, self.button_height)
 
-        # Left vertical
+        # Cạnh bên trái
         arcade.draw_line(self.center_x - self.width / 2, self.center_y - self.height / 2,
                          self.center_x - self.width / 2, self.center_y + self.height / 2,
                          color, self.button_height)

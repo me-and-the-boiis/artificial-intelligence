@@ -5,7 +5,7 @@ import math
 from .draw_map import G_H, G_W
 
 class Road:
-
+    #Để tạo ra đường đi
     def __init__(self):
         self.mass = 10
         self.max_speed = 100
@@ -46,15 +46,15 @@ class Road:
 
 
 ################### Setters ###################
-
+    #Set trạng thái khởi đầu (initial state)
     def set_start(self, start):
         self.body.position = pymunk.Vec2d(start.x * G_W + G_W / 2, start.y * G_H + G_H / 2)
-
+    #Set trạng thái mục tiêu (goal state)
     def set_goal(self, goal):
         self.goal = pymunk.Vec2d(goal.x * G_W + G_W / 2, goal.y * G_H + G_H / 2)
 
     def set_path(self, path, boundaries):
-        # Ignore start point
+        # Bỏ qua điểm bắt đầu
         self.boundaries = boundaries[1:]
         self.path = path[1:]
         pos = self.body.position
@@ -91,11 +91,6 @@ class Road:
         self.boundaries = None
 
 
-################### Debug ###################
-
-    def __draw_debug(self):
-        self.debug.draw()
-        self.debug = arcade.ShapeElementList()
 
 
 ################### Private Functions ###################
