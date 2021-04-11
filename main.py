@@ -4,10 +4,12 @@ import random
 import time
 random.seed()
 
+
 class Board:
-    def __init__(self, state, height):
+    def __init__(self, state, height, move):
         self.state = state
         self.height = height
+        self.move = move
         for x in range(len(state)):
             for y in range(len(state)):
                 if state[x][y] == 0:
@@ -18,8 +20,8 @@ class Board:
         return self.state == other.state
 
 
-def movement(index, new_index, node):
-    new = Board(deepcopy(node.state), node.height + 1)
+def movement(index, new_index, node, mv):
+    new = Board(deepcopy(node.state), node.height + 1, mv)
     new.state[index[0]][index[1]] = node.state[new_index[0]][new_index[1]]
     new.state[new_index[0]][new_index[1]] = node.state[index[0]][index[1]]
     new.index = new_index
@@ -31,19 +33,19 @@ def generate(node):
     # Up
     if node.index[0] != 0:
         new_index = (node.index[0] - 1, node.index[1])
-        nodes.append(movement(node.index, new_index, node))
+        nodes.append(movement(node.index, new_index, node, "UP"))
     # Down
     if node.index[0] != len(node.state) - 1:
         new_index = (node.index[0] + 1, node.index[1])
-        nodes.append(movement(node.index, new_index, node))
+        nodes.append(movement(node.index, new_index, node, "DOWN"))
     # Left
     if node.index[1] != 0:
         new_index = (node.index[0], node.index[1] - 1)
-        nodes.append(movement(node.index, new_index, node))
+        nodes.append(movement(node.index, new_index, node, "LEFT"))
     # Right
     if node.index[1] != len(node.state) - 1:
         new_index = (node.index[0], node.index[1] + 1)
-        nodes.append(movement(node.index, new_index, node))
+        nodes.append(movement(node.index, new_index, node, "RIGHT"))
     return nodes
 
 
@@ -59,7 +61,7 @@ def state2number(state):
 def dfs(root):
     # visited = list([Board(root, 0)])
     visited = list([state2number(root)])
-    stack = list([Board(root, 0)])
+    stack = list([Board(root, 0, "INIT")])
     correct_path = []
     while stack:
         # print(len(visited))
@@ -81,6 +83,7 @@ def dfs(root):
                 if ha not in visited:
                     stack.append(path)
                     visited.append(ha)
+    return []
 
 
 def randomme(n):
@@ -88,16 +91,10 @@ def randomme(n):
     return np.reshape(oned, (n, n))
 
 
-# init = randomme(2)
-# goal = randomme(2)
-# init = [[1, 2, 5],
-#         [3, 4, 0],
-#         [6, 7, 8]]
 goal = [[0, 1, 2],
         [3, 4, 5],
         [6, 7, 8]]
-# print(init)
-# print(goal)
+
 
 def initInit(goal, count):
     def move(init, i, j, si,  sj):
@@ -126,15 +123,16 @@ def initInit(goal, count):
     return init
 
 
-
-
-
 def main():
     init = initInit(goal, 20)
     solver = dfs(init)
     print(init, end="")
     for i in range(len(solver)):
         print(" -> ", solver[i].state, end="")
+    print()
+    for i in range(len(solver)):
+        print(solver[i].move, end=" -> ")
+    print("DONE")
 
 
 start_time = time.time()
