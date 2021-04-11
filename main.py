@@ -12,6 +12,10 @@ class Board:
                 if init[x][y] == 0:
                     self.index = (x, y)
 
+    def __eq__(self, other):
+        # return (self.state == other.state).all() and self.index == other.index
+        return self.state == other.state and self.index == other.index
+
 
 def movement(index, new_index, node):
     new = Board(deepcopy(node.state))
@@ -43,22 +47,19 @@ def generate(node):
 
 
 def dfs(root):
-    visited = set()
+    visited = list([Board(root)])
     stack = list([Board(root)])
     while stack:
         node = stack.pop()
-        for i in visited:
-            if node == i:
-                continue
-        visited.add(node)
+        # if (node.state == goal).all():
         if node.state == goal:
             return stack
         # Generate possible paths
-        possible_paths = generate(node)
+        possible_paths = reversed(generate(node))
         for path in possible_paths:
             if path not in visited:
                 stack.append(path)
-                visited.add(path)
+                visited.append(path)
 
 
 def randomme(n):
@@ -66,18 +67,27 @@ def randomme(n):
     return np.reshape(oned, (n, n))
 
 
-init = randomme(2)
-goal = randomme(2)
-# init = [[0, 1],
-#         [2, 3]]
-# goal = [[1, 0],
-#         [2, 3]]
-print(init)
-print(goal)
+# init = randomme(2)
+# goal = randomme(2)
+# init = [[1, 2, 5],
+#         [3, 4, 0],
+#         [6, 7, 8]]
+# goal = [[0, 1, 2],
+#         [3, 4, 5],
+#         [6, 7, 8]]
+init = [[2, 1],
+        [0, 3]]
+goal = [[1, 0],
+        [2, 3]]
+# print(init)
+# print(goal)
 
 
 def main():
-    dfs(init)
+    solver = dfs(init)
+    for i in range(len(solver) - 1):
+        print(solver[i], end=" -> ")
+    print(solver[-1])
 
 
 if __name__ == '__main__':
